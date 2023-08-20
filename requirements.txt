@@ -1,0 +1,8 @@
+alembic==1.11.2
+fastapi==0.101.1
+graphene-sqlalchemy==3.0.0b4
+graphene==3.3
+pip-chill==1.0.3
+python-dotenv==1.0.0
+rx==1.6.3
+uvicorn==0.23.2
