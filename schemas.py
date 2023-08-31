@@ -2,27 +2,22 @@ from pydantic import BaseModel
 from models import session, Post
 import strawberry
 from strawberry.types import Info
+from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 
-# class PostSchema(BaseModel):
-#     title: str
-#     content: str
 
-# Create PostType
-@strawberry.type
+strawberry_sqlalchemy_mapper = StrawberrySQLAlchemyMapper()
+
+
+@strawberry_sqlalchemy_mapper.type(Post)
 class PostType:
-    title: str
-    author: str
-    content: str
+    pass
 
 
 @strawberry.type
 class Query:
     @strawberry.field
     def get_posts(self, info: Info) -> list[PostType]:
-        return [
-            PostType(title=post.title, author=post.author, content=post.content)
-            for post in session.query(Post).all()
-        ]
+        return session.query(Post).all()
 
     @strawberry.field
     def hello_world(self, info: Info) -> str:
@@ -38,9 +33,8 @@ class Mutation:
         session.add(new_post)
         session.commit()
         print(f"Added new post {new_post.title}")
-        return PostType(
-            title=new_post.title, author=new_post.author, content=new_post.content
-        )
+        return new_post
 
 
+strawberry_sqlalchemy_mapper.finalize()
 schema = strawberry.Schema(query=Query, mutation=Mutation)
